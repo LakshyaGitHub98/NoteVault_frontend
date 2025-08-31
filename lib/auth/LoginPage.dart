@@ -34,18 +34,18 @@ class LoginPage extends StatelessWidget{
 
                 final username=usernameController.text;
                 final password=passwordController.text;
-                print("Email : $username and Password : $password");
+                //print("Email : $username and Password : $password");
                 if(username=="admin123@gmail.com" && password=="admin@123"){
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) =>Adminpanel(title:"Admin Panel")),
                   );
                 }
-                bool result = await ApiServices.loginUser(username,password);
-                if(result){
+                final userId = await ApiServices.loginUser(username,password);
+                if(userId!=null){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>EditorPage()),
+                    MaterialPageRoute(builder: (context) => EditorPage(userId: userId)),
                   );
                 }
                 else{

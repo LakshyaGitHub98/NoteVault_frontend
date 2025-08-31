@@ -8,7 +8,7 @@ class ApiServices {
   static Future<List<User>> fetchUsers() async {
     try {
       final response = await http
-          .get(Uri.parse('$baseUrl/users/'))
+          .get(Uri.parse('$baseUrl/users'))
           .timeout(const Duration(seconds: 10));
 
       print("Status: ${response.statusCode}");
@@ -105,8 +105,9 @@ class ApiServices {
     }
   }
 
-  static Future<bool> loginUser(String username, String password) async {
+  static Future<String> loginUser(String username, String password) async {
     try {
+      print("Calling: $baseUrl/auth/login");
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
         headers: {
@@ -119,13 +120,18 @@ class ApiServices {
       ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
-        return true;
-      } else {
+        final data = jsonDecode(response.body);
+        final userId = data['userId'];
+        print("✅ Logged in! User ID: $userId");
+        return userId;
+      }else {
         throw Exception('Failed to load User : ${response.statusCode}');
       }
-    } catch (e) {
-      throw Exception('API Call Failed : $e');
+    }catch (e, stackTrace) {
+
+      throw Exception('API Call Failed: $e');
     }
+
   }
 
   static Future<bool> registerUser(User user) async{
@@ -143,7 +149,35 @@ class ApiServices {
       else throw Exception('Failed to Register : ${response.statusCode}');
     }
     catch(e){
-      throw Exception('Api Called Failed : $e');
+      throw Exception('Api Called Failed  through register: $e');
+    }
+  }
+
+
+
+  static Future<bool> uploadFile({
+    required String filename,
+    required String description,
+    required String userId,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/files/upload');
+      final response = await http
+          .post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'filename': filename,
+          'description': description,
+          'userId': userId,
+        }),
+      )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200 || response.statusCode == 201) return true;
+      throw Exception('Failed to Upload File : ${response.statusCode}');
+    } catch (e) {
+      throw Exception('API Call Failed through upload file : $e');
     }
   }
 }

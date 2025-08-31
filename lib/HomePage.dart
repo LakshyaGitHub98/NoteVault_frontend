@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_vault_frontend/auth/RegistrationPage.dart';
 import 'auth/LoginPage.dart';
-import 'admin/CreateNewUser.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildNavButton("Login", LoginPage()),
+            _buildNavButton("Login",LoginPage()),
             SizedBox(height: 16),
             _buildNavButton("Register", RegistrationPage()),
           ],
