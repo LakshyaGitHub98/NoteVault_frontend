@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -31,8 +18,42 @@
 
   <title>note_vault_frontend</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- ✅ Custom Styles -->
+  <style>
+    .download-banner {
+      background-color: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .download-button {
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      background-color: #007bff;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .download-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+
+<!--&lt;!&ndash; ✅ APK Download Banner &ndash;&gt;-->
+<!--<div class="download-banner">-->
+<!--  <a href="assets/notevault.apk" download class="download-button">-->
+<!--    📥 Download NoteVault APK-->
+<!--  </a>-->
+<!--</div>-->
+
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

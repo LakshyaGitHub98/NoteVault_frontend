@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/models/User.dart';
-import '/services/ApiServices.dart';
+import '/services/AdminApiServices.dart';
 
 class CreateNewUser extends StatefulWidget {
   @override
@@ -30,7 +30,7 @@ class _CreateNewUserState extends State<CreateNewUser> {
       );
 
       try {
-        final success = await ApiServices.createNewUser(newUser);
+        final success = await AdminApiServices.createUser(newUser);
         setState(() {
           _statusMessage = success ? "User created successfully!" : "Failed to create user.";
         });

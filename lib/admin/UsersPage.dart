@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_vault_frontend/services/ApiServices.dart';
+import 'package:note_vault_frontend/services/AdminApiServices.dart';
 import '/models/User.dart'; // Import the model
 
 class UsersPage extends StatefulWidget {
@@ -13,7 +13,7 @@ class _UsersPageState extends State<UsersPage> {
   @override
   void initState() {
     super.initState();
-    _usersFuture = ApiServices.fetchUsers();
+    _usersFuture = AdminApiServices.getAllUsers();
   }
 
   @override

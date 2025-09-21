@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/models/User.dart';
-import '/services/ApiServices.dart';
+import '/services/AdminApiServices.dart';
 
 class UpdateUser extends StatefulWidget {
   @override
@@ -21,7 +21,7 @@ class _UpdateUserState extends State<UpdateUser> {
     final id = _idController.text.trim();
     if (id.isNotEmpty) {
       setState(() {
-        _userFuture = ApiServices.fetchUserbyId(id);
+        _userFuture = AdminApiServices.getUserById(id);
         _statusMessage = null;
       });
 
@@ -59,7 +59,7 @@ class _UpdateUserState extends State<UpdateUser> {
     );
 
     try {
-      final success = await ApiServices.updateUserById(id, updatedUser);
+      final success = await AdminApiServices.updateUser(id, updatedUser);
       setState(() {
         _statusMessage = success ? "User updated successfully!" : "Update failed.";
       });

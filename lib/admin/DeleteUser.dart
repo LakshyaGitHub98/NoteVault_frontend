@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_vault_frontend/services/ApiServices.dart';
+import 'package:note_vault_frontend/services/AdminApiServices.dart';
 
 class DeleteUser extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class _DeleteUserPageState extends State<DeleteUser> {
     final id = _idController.text.trim();
     if (id.isNotEmpty) {
       setState(() {
-        _deleteUserFuture = ApiServices.deleteUserbyId(id);
+        _deleteUserFuture = AdminApiServices.deleteUser(id);
       });
     }
   }

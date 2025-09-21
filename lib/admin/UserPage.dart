@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note_vault_frontend/services/ApiServices.dart';
+import 'package:note_vault_frontend/services/AdminApiServices.dart';
 import '/models/User.dart';
 
 class UserPage extends StatefulWidget {
@@ -15,7 +15,7 @@ class _UserPageState extends State<UserPage> {
     final id = _idController.text.trim();
     if (id.isNotEmpty) {
       setState(() {
-        _userFuture = ApiServices.fetchUserbyId(id);
+        _userFuture = AdminApiServices.getUserById(id);
       });
     }
   }
