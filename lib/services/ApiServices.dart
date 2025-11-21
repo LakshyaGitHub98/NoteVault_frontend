@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '/models/User.dart';
 import '/models/FileModel.dart';
 import '/services/AuthServices.dart';
 
@@ -30,47 +29,6 @@ class ApiServices {
       }
     } catch (_) {}
     return body;
-  }
-
-  // ------------------ AUTH ------------------
-  static Future<Map<String, String>> loginUser(String username, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'username': username, 'password': password}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final token = data['token'] as String?;
-        final userId = (data['userId'] ?? data['id'] ?? data['_id'])?.toString();
-
-        if (token == null || token.isEmpty) throw Exception('No token in response');
-
-        await AuthService.saveSession(token: token, userId: userId);
-        return {'token': token, if (userId != null) 'userId': userId};
-      }
-
-      throw Exception('Login failed: ${response.statusCode} ${response.body}');
-    } catch (e) {
-      throw Exception('Login API failed: $e');
-    }
-  }
-
-  static Future<bool> registerUser(User user) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(user.toJson()),
-      );
-
-      if ([200, 201].contains(response.statusCode)) return true;
-      throw Exception('Registration failed: ${response.statusCode}');
-    } catch (e) {
-      throw Exception('Register API failed: $e');
-    }
   }
 
   // ------------------ FILES ------------------
@@ -125,7 +83,7 @@ class ApiServices {
     }
   }
 
-  /// View all files for a user (editor notes + system files)
+  /// View all files for a user
   static Future<List<FileModel>> viewAllFiles({required String userId}) async {
     try {
       // Fetch normal uploaded files
@@ -157,7 +115,6 @@ class ApiServices {
         _handleUnauthorized();
       }
 
-      // Combine both
       return [...uploadedFiles, ...systemFiles];
     } catch (e) {
       throw Exception('Fetch all files API failed: $e');
@@ -165,10 +122,7 @@ class ApiServices {
   }
 
   /// Delete a file
-  static Future<bool> deleteFile({
-    required String userId,
-    required String fileId,
-  }) async {
+  static Future<bool> deleteFile({required String userId, required String fileId}) async {
     try {
       final uri = Uri.parse('$baseUrl/file/user/$userId/file/$fileId');
       final response = await http.delete(uri, headers: await _headers());

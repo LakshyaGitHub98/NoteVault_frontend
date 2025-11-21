@@ -9,6 +9,7 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
+  sms_autofill: ^2.3.0
   path_provider: ^2.0.15
   open_filex: ^4.3.2
   shared_preferences: ^2.3.2

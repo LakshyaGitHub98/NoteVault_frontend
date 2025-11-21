@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:note_vault_frontend/admin/AdminPanel.dart';
 import 'package:note_vault_frontend/auth/RegistrationPage.dart';
+import 'package:note_vault_frontend/auth/forgot_password_page.dart';
 import 'package:note_vault_frontend/screens/UserProfilePage.dart';
-
-// Use the actual filenames (lowercase recommended)
-import '/services/ApiServices.dart';
 import '/services/AuthServices.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool isLoading = false;
-  bool rememberMe = true; // persistent by default
+  bool rememberMe = true;
   bool isPasswordVisible = false;
 
   late AnimationController _animController;
@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         throw Exception('Please enter both username and password.');
       }
 
-      // Admin shortcut (optional)
+      // Admin shortcut
       if (username == "admin123" && password == "admin@123") {
         if (rememberMe) {
           await AuthService.saveSession(token: 'admin-session-token', userId: 'admin');
@@ -58,16 +58,17 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => AdminPanel(title: "Admin Panel")),
+          MaterialPageRoute(builder: (_) =>AdminPanel(title: "Admin Panel")),
         );
         return;
       }
 
-      // Calls backend, gets token (+ maybe userId) and saves session
-      // Ensure ApiServices.loginUser returns Map<String, String>
-      final result = await ApiServices.loginUser(username, password);
+      // Normal user login
+      final result = await AuthService.loginUser(username, password);
+      if (result == null || result['userId'] == null) {
+        throw Exception('Invalid login response.');
+      }
 
-      // Resolve userId: prefer backend response; else decode from token via AuthService
       String? userId = result['userId'];
       userId ??= await AuthService.getUserId();
 
@@ -81,7 +82,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         MaterialPageRoute(
           builder: (_) => UserProfilePage(
             userId: userId!,
-            profileImageUrl: '', // Widget has asset fallback
+            profileImageUrl: '',
           ),
         ),
       );
@@ -90,9 +91,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Login failed. ${e.toString()}")),
       );
-      // Optionally route to registration
-      Navigator.push(context, MaterialPageRoute(builder: (_) => RegistrationPage
-      ()));
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -172,8 +170,25 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                  )
                       : const Text("SIGN IN", style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
+                    );
+                  },
+                  child: const Text(
+                    "Forgot Password?",
+                    style: TextStyle(color: Colors.white70, decoration: TextDecoration.underline),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -187,9 +202,12 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => RegistrationPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RegistrationPage()));
                   },
-                  child: const Text("New here? Create an account", style: TextStyle(color: Colors.white70)),
+                  child: const Text(
+                    "New here? Create an account",
+                    style: TextStyle(color: Colors.white70),
+                  ),
                 ),
               ],
             ),
